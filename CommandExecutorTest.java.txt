@@ -1,0 +1,38 @@
+// CommandExecutorTest.java
+package knightmover;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+public class CommandExecutorTest {
+
+    @Test
+    public void testValidExecution() {
+        Board board = new Board(8, 8);
+        List<Command> commands = List.of(
+            new Command("START", 0, 0),
+            new Command("MOVE", "RIGHT", 2),
+            new Command("MOVE", "DOWN", 3)
+        );
+
+        KnightMover executor = new KnightMover(board);
+        String result = executor.execute(commands);
+        assertEquals("3 2", result);
+    }
+
+    @Test
+    public void testObstacleHalt() {
+        Board board = new Board(8, 8);
+        board.addObstacle(1, 0);
+        List<Command> commands = List.of(
+            new Command("START", 0, 0),
+            new Command("MOVE", "DOWN", 3)
+        );
+
+        KnightMover executor = new KnightMover(board);
+        String result = executor.execute(commands);
+        assertEquals("1 0", result); // should stop at obstacle
+    }
+}

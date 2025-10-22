@@ -1,0 +1,24 @@
+// BoardTest.java
+package knightmover;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+public class BoardTest {
+
+    @Test
+    public void testObstacleDetection() {
+        Board board = new Board(8, 8);
+        board.addObstacle(3, 3);
+        assertTrue(board.isObstacle(3, 3));
+        assertFalse(board.isObstacle(4, 4));
+    }
+
+    @Test
+    public void testInvalidObstaclePosition() {
+        Board board = new Board(8, 8);
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            board.addObstacle(-1, 10);
+        });
+    }
+}

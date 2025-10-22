@@ -1,0 +1,25 @@
+// KnightTest.java
+package knightmover;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+public class KnightTest {
+
+    @Test
+    public void testMoveRight() {
+        Knight knight = new Knight(0, 0);
+        knight.move("RIGHT", 2);
+        assertEquals(0, knight.getX());
+        assertEquals(2, knight.getY());
+    }
+
+    @Test
+    public void testMoveOutOfBounds() {
+        Knight knight = new Knight(0, 0);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            knight.move("LEFT", 1);
+        });
+        assertTrue(exception.getMessage().contains("OUT_OF_THE_BOARD"));
+    }
+}

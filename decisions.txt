@@ -1,0 +1,227 @@
+ 1. Separation of Concerns with Classes (Board, Obstacle, Command, Position, Result)
+Why?
+To follow object-oriented design principles like Single Responsibility and Encapsulation.
+
+Effect:
+Each class handles only one aspect of the logic, making the program modular and easier to maintain or extend.
+
+2. Fetching Input from URLs
+Why?
+Inputs like the board configuration and commands are fetched from remote JSON files.
+
+Effect:
+This simulates real-world use where configurations are centralized or dynamic (common in distributed systems or games with dynamic levels).
+
+3. Use of HttpClient from java.net.http
+Why?
+It’s a modern API introduced in Java 11 for cleaner, non-blocking HTTP communication.
+
+Effect:
+Improves readability, modernizes the code, and avoids deprecated libraries like HttpURLConnection.
+
+4. Use of Gson for JSON Parsing
+Why?
+Gson is lightweight, well-supported, and simplifies mapping JSON to Java objects without writing verbose code.
+
+Effect:
+Enhances maintainability and reduces parsing errors.
+
+Google's Gson is used for serialization and deserialization of JSON:
+
+Gson gson = new Gson();
+
+It simplifies the conversion between Java objects and JSON strings.
+
+5. Structured Error Handling
+Why?
+Handles common issues like malformed input, invalid positions, or I/O errors in a clean way.
+
+Effect:
+Prevents the program from crashing and returns meaningful error statuses like "GENERIC_ERROR" or "OUT_OF_THE_BOARD".
+
+6. Switch-Case for Command Execution
+Why?
+Clear separation of logic for each command type (START, MOVE, ROTATE) using a switch-case.
+
+Effect:
+Makes command handling straightforward and extensible (new commands can be added easily).
+
+7. Output as JSON to System.out
+Why?
+Ensures machine-readable output, suitable for pipelines or integrations.
+
+Effect:
+Makes the output format consistent and API-ready (e.g., for integration with web UIs or monitoring systems).
+
+
+
+8. Custom Command Parsing
+
+Handles input commands flexibly (with or without direction/value).
+
+Uses overloaded methods createCommand(String, String) and createCommand(String, int) for clarity.
+
+9. Robust Command Execution Logic
+
+Commands are interpreted one by one.
+
+Safeguards are in place:
+
+Don’t allow MOVE before START
+
+Don’t allow START more than once
+
+Prevent movement out of bounds or into obstacles
+
+10. Error Handling with Status Codes
+
+The Result object carries a status field with values like:
+
+"SUCCESS" – when all commands execute properly
+
+"OUT_OF_THE_BOARD" – if the knight moves out of range
+
+"GENERIC_ERROR" – for unexpected or malformed inputs
+
+"INVALID_START_POSITION" – if the initial position is invalid
+
+11. Obstacle Check
+
+
+if (isObstacle(board, nextX, nextY)) { break; }
+If an obstacle is encountered, the knight stops moving but doesn’t fail — a realistic and graceful behavior.
+
+
+Testing and explination of test files.
+
+1. Knight.java
+Purpose: This class represents the Knight piece and the logic behind moving it on the board.
+
+Key Method: move(String direction, int distance) is used to move the knight based on the direction provided.
+
+Testing Focus: You will test if the knight moves properly and checks for boundaries or obstacles when moving.
+
+Test in KnightTest.java:
+
+testMoveRight(): Tests if the knight moves properly to the right.
+
+testMoveOutOfBounds(): Ensures that the knight cannot move out of the board.
+
+2. Board.java
+Purpose: This class manages the board size, obstacles, and valid positions.
+
+Key Method: addObstacle(int x, int y) to add obstacles and isObstacle(int x, int y) to check if a cell has an obstacle.
+
+Testing Focus: You will test if obstacles are placed correctly and if boundary checks are functioning properly.
+
+Test in BoardTest.java:
+
+testObstacleDetection(): Tests if the board detects obstacles correctly.
+
+testInvalidObstaclePosition(): Ensures that invalid positions for obstacles throw an exception.
+
+3. Command.java
+Purpose: This class represents a command that can be executed (e.g., start the knight, move it in a direction).
+
+Testing Focus: Not directly tested here, but it plays a role in command execution, validated in CommandExecutorTest.java.
+
+4. KnightMover.java
+Purpose: The KnightMover class is responsible for orchestrating the movement of the knight based on a series of commands.
+
+Key Method: execute(List<Command> commands) is where the actual logic of executing a series of commands (like moving the knight) happens.
+
+Testing Focus: Integration of multiple commands and handling errors such as obstacles or out-of-bounds movements.
+
+Test in CommandExecutorTest.java:
+
+testValidExecution(): Ensures the knight executes valid moves successfully.
+
+testObstacleHalt(): Ensures the knight stops when encountering an obstacle.
+
+5. CommandExecutorTest.java
+Purpose: This test class validates the command execution logic and how the board and knight interact to execute commands.
+
+Focus: Ensuring that when commands are passed to the KnightMover class, it behaves as expected.
+
+Key Tests:
+
+testValidExecution(): Tests the case where a valid sequence of commands is provided.
+
+testObstacleHalt(): Ensures that the knight stops when an obstacle is encountered during movement.
+
+6. IntegrationTest.java
+Purpose: This class tests the entire flow of interacting components. It simulates a real scenario where commands are processed from start to finish.
+
+Focus: Full interaction between the Board, Knight, and Command logic. Ensures that the system behaves as expected when integrated.
+
+Key Tests:
+
+testNoStartCommand(): Verifies that when no start command is given, the system throws an appropriate error.
+
+testMoveOutOfBoard(): Verifies that moving out of the board boundaries throws an error.
+
+🧪 Test Execution Process
+JUnit 5 is used for testing.
+
+Each class (KnightTest.java, BoardTest.java, etc.) is a separate unit test for specific components (Knight, Board, etc.).
+
+Test execution flow:
+
+The JUnit framework will execute each test method within a class.
+
+Each method will verify the behavior of the respective class and assert that the conditions are met (e.g., knight moves correctly, obstacle is detected, etc.).
+
+🧑‍💻 How to Execute Tests
+1. Maven
+If you are using Maven, here's how you would run your tests:
+
+Ensure you have JUnit 5 as a dependency in your pom.xml:
+
+
+<dependencies>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>5.7.0</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>5.7.0</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+To run all tests:
+
+
+mvn test
+Maven will automatically locate all test classes in the src/test/java folder and run them.
+
+2. Gradle
+If you're using Gradle:
+
+Ensure you have the JUnit 5 dependency in your build.gradle:
+
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+To run all tests:
+
+
+./gradlew test
+Gradle will execute the tests similarly to Maven.
+
+📝 Explanation of the Testing Strategy
+Unit Testing: The primary focus is on testing the individual methods of the Knight, Board, and CommandExecutor classes. For example, testing knight movement, board obstacle handling, and the correct execution of commands.
+
+Edge Case Handling: You also test edge cases like invalid commands (out of bounds, obstacles), ensuring your program behaves correctly under such scenarios.
+
+Integration Testing: The integration test ensures that multiple classes work together as expected, simulating real-world usage of the system (e.g., executing a sequence of commands that move the knight across the board).
+
+Error Handling: Testing focuses on how the system handles errors (e.g., trying to move the knight out of bounds or encountering obstacles).
+
+
+

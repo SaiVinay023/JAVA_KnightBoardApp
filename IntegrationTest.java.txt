@@ -1,0 +1,34 @@
+// IntegrationTest.java
+package knightmover;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import java.util.List;
+
+public class IntegrationTest {
+
+    @Test
+    public void testNoStartCommand() {
+        Board board = new Board(8, 8);
+        List<Command> commands = List.of(
+            new Command("MOVE", "RIGHT", 2)
+        );
+
+        KnightMover executor = new KnightMover(board);
+        String result = executor.execute(commands);
+        assertEquals("GENERIC_ERROR", result);
+    }
+
+    @Test
+    public void testMoveOutOfBoard() {
+        Board board = new Board(8, 8);
+        List<Command> commands = List.of(
+            new Command("START", 0, 0),
+            new Command("MOVE", "LEFT", 1)
+        );
+
+        KnightMover executor = new KnightMover(board);
+        String result = executor.execute(commands);
+        assertEquals("OUT_OF_THE_BOARD", result);
+    }
+}
